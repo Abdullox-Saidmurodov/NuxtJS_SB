@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
+import { ACCOUNT } from '~/libs/appwrite';
+import { useAuthStore } from '~/store/auth.store'
 
 defineProps({
   toggleLogin: {
@@ -7,6 +9,13 @@ defineProps({
     required: true,
   }
 })
+
+const toast = useToast()
+const authStore = useAuthStore()
+const router = useRouter()
+
+const isLoading = ref(false)
+const error = ref('')
 
 const state = reactive({
   email: undefined,
@@ -21,11 +30,36 @@ const validate = (state: any): FormError[] => {
 }
 
 async function onSubmit(event: FormSubmitEvent<any>) {
-  console.log(event.data)
+  // console.log(event.data)
+  isLoading.value = true
+  const { email, password } = event.data
+
+  try {
+    // await ACCOUNT.createEmailSession(email, password)
+    await ACCOUNT.createEmailPasswordSession(email, password)
+    const response = await ACCOUNT.get()
+    authStore.set({email: response.email, id: response.$id, name: response.name, status: response.status})
+    toast.add({
+      title: 'Logged in',
+      description: 'You are now logged in',
+    })
+    await router.push('/')
+  } catch (err: eny) {
+    isLoading.value = false
+    error.value = err.message
+  }
 }
 </script>
 
 <template>
+  <UAlert
+    icon="i-heroicons-command-line"
+    :description="error"
+    title="Error"
+    v-if="error"
+    color="red"
+    variant="outline"
+  />
   <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
     <UFormGroup label="Email" name="email">
       <UInput v-model="state.email" color="blue" block size="lg" />
@@ -42,8 +76,10 @@ async function onSubmit(event: FormSubmitEvent<any>) {
       </span>
     </div>
 
-    <UButton type="submit" color="blue" class="w-full" block size="lg">
-      Submit
+    <UButton type="submit" color="blue" class="w-full" block size="lg" :disabled="isLoading">
+      <!-- Submit -->
+      <template v-if="isLoading"><Icon name="svg-spinners:3-dots-scale" class="w-5 h-5" /></template>
+      <template v-else>Next</template>
     </UButton>
   </UForm>
 </template>

@@ -2,12 +2,18 @@
 import type { FormError, FormSubmitEvent } from '#ui/types'
 import { ACCOUNT, UNIQUE_ID } from '~/libs/appwrite';
 
-defineProps({
+
+const props = defineProps({
   toggleLogin: {
     type: Function,
     required: true,
   }
 })
+
+const toast = useToast()
+
+const isLoading = ref(false)
+const error = ref('')
 
 const state = reactive({
   name: undefined,
@@ -24,19 +30,39 @@ const validate = (state: any): FormError[] => {
 }
 
 async function onSubmit(event: FormSubmitEvent<any>) {
-//   console.log(event.data)
-const {name, email, password} = event.data
+  isLoading.value = true
+  //   console.log(event.data)
+  const { name, email, password } = event.data
 
-try {
-    const response = await ACCOUNT.create(UNIQUE_ID, email, password, name)
-    console.log(response)
-} catch (err) {
-    console.error(err)
-}
+  try {
+    // const response = await ACCOUNT.create(UNIQUE_ID, email, password, name)
+    // console.log(response)
+    await ACCOUNT.create(UNIQUE_ID, email, password, name)
+    // await ACCOUNT.createEmailSession(email, password)
+    props.toggleLogin()
+    toast.add({
+      title: 'Account created',
+      description: 'You can now login with your new account',
+    })
+    // console.log("1234")
+    isLoading.value = false
+  } catch (err: any) {
+    isLoading.value = false
+    error.value = err.message
+    // console.error(err)
+  }
 }
 </script>
 
 <template>
+  <UAlert
+    icon="i-heroicons-command-line"
+    :description="error"
+    title="Error"
+    v-if="error"
+    color="red"
+    variant="outline"
+  />
   <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
     <UFormGroup label="Name" name="name">
       <UInput v-model="state.name" color="blue" block size="lg" />
@@ -57,8 +83,10 @@ try {
       </span>
     </div>
 
-    <UButton type="submit" color="blue" class="w-full" block size="lg">
-      Submit
+    <UButton type="submit" color="blue" class="w-full" block size="lg" :disabled="isLoading">
+      <!-- Submit -->
+      <template v-if="isLoading"><Icon name="svg-spinners:3-dots-scale" class="w-5 h-6" /></template>
+      <template v-else>Next</template>
     </UButton>
   </UForm>
 </template>
