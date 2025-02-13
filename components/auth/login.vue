@@ -44,7 +44,7 @@ async function onSubmit(event: FormSubmitEvent<any>) {
       description: 'You are now logged in',
     })
     await router.push('/')
-  } catch (err: eny) {
+  } catch (err: any) {//eny
     isLoading.value = false
     error.value = err.message
   }

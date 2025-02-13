@@ -1,21 +1,21 @@
-import { COLLECTION_DEALS } from './../constants/index';
+import { COLLECTION_DEALS } from '~/constants/index';
 // import {useQuery} from '@transtack/vue-query'import { useQuery } from '@tanstack/vue-query'
 import { useQuery } from '@tanstack/vue-query'
 import { DATABASE } from '~/libs/appwrite'
-import {useAuthStore} from './../store/auth.store'
+import { useAuthStore } from './../store/auth.store'
 import { Query } from 'appwrite'
 import { COLLECTION_DEALS, DB_ID, status } from '~/constants'
 import { IColumn, IDeal } from '~/types/index';
 
-export const useStatusQuery = () => {
+export const useStatusQuery = (userId: string) => {
     const {currentUser} = useAuthStore()
 
-    console.log(currentUser.id)
+    // console.log(currentUser.id)
 
     return useQuery({
         queryKey: ['deals'],
         queryFn: () => DATABASE.listDocuments(DB_ID, COLLECTION_DEALS, [
-            Query.equal('userId', currentUser.id),
+            Query.equal('userId', currentUser.id),//currentUser.id // userId
         ]),
         select: data => {
             // console.log(data)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {ACCOUNT} from '~/libs/appwrite'
-import {useLoadingStore} from '~/store/loading.store'
+// import {ACCOUNT} from '~/libs/appwrite'
+// import {useLoadingStore} from '~/store/loading.store'
 import {useAuthStore} from '~/store/auth.store'
 import {status} from '~/constants/index'
 import { useStatusQuery } from '~/query/use-status-query'
@@ -11,34 +11,38 @@ definePageMeta({
 })
 useHead({title: 'Documents | Jira software'})
 
-const router = useRouter()
-const loadingStore = useLoadingStore()
-const authStore = useAuthStore()
+// const {userId} = useAuthStore()
+// console.log("15", userId)
 
-onMounted(() => {
-    ACCOUNT.get()
-        .then((response) => {
-            loadingStore.set(false)
-            authStore.set({
-                email: response.email, 
-                id: response.$id, 
-                name: response.name, 
-                status: response.status
-            })
-        })
-        .catch(() => router.push('/auth'))
-})
+// const router = useRouter()
+// const loadingStore = useLoadingStore()
+// const authStore = useAuthStore()
 
-const {data, isLoading} = useStatusQuery()
+// onMounted(() => {
+//     ACCOUNT.get()
+//         .then((response) => {
+//             loadingStore.set(false)
+//             authStore.set({
+//                 email: response.email, 
+//                 id: response.$id, 
+//                 name: response.name, 
+//                 status: response.status
+//             })
+//             // const {data, isLoading, refetch} = useStatusQuery()
+//         })
+//         .catch(() => router.push('/auth'))
+// })
+
+const {data, isLoading, refetch} = useStatusQuery() //userId
 // console.log("+ ", data)
 </script>
 
 <template>
     <div class="grid grid-cols-4 gap-2 mt-12" v-if="isLoading">
-        <USkeleton class="h-12 bg-gray-900" />
-        <USkeleton class="h-12 bg-gray-900" />
-        <USkeleton class="h-12 bg-gray-900" />
-        <USkeleton class="h-12 bg-gray-900" />
+        <USkeleton class="h-12 dark:bg-gray-900 bg-gray-100" />
+        <USkeleton class="h-12 dark:bg-gray-900 bg-gray-100" />
+        <USkeleton class="h-12 dark:bg-gray-900 bg-gray-100" />
+        <USkeleton class="h-12 dark:bg-gray-900 bg-gray-100" />
 
         <UiDealsLoader />
         <UiDealsLoader />
@@ -54,9 +58,9 @@ const {data, isLoading} = useStatusQuery()
                 </div>
             </UButton>
 
-            <!-- <SharedCreateDeal /> -->
+            <SharedCreateDeal :status="item.id" :refetch="refetch" />
 
-            <div class="my-3 bg-gray-900 rounded-md p-2" 
+            <div class="my-3 dark:bg-gray-900 bg-gray-100 rounded-md p-2 animation" 
                  v-for="card in item.items" :key="card.$id"
                  role="button"
                  draggable="true">
@@ -78,3 +82,20 @@ const {data, isLoading} = useStatusQuery()
         </div>
     </div>
 </template>
+
+<style scoped>
+@keyframes show {
+    from {
+        transform: scale(0.5) translate(-30px);
+        opacity: 0.4;
+    }
+    to {
+        transform: scale(1) translate(0);
+        opacity: 1;
+    }
+}
+
+.animation {
+    animation: show 0.3s ease-in-out;
+}
+</style>
