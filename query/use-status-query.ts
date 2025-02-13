@@ -7,7 +7,7 @@ import { Query } from 'appwrite'
 import { COLLECTION_DEALS, DB_ID, status } from '~/constants'
 import { IColumn, IDeal } from '~/types/index';
 
-export const useStatusQuery = (userId: string) => {
+export const useStatusQuery = () => {//userId: string
     const {currentUser} = useAuthStore()
 
     // console.log(currentUser.id)
