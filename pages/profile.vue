@@ -1,3 +1,3 @@
 <template>
-    <div>123456</div>
+    <div>Profile page</div>
 </template>
