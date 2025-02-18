@@ -8,13 +8,11 @@ import { DATABASE } from '~/libs/appwrite'
 import type { IColumn, IDeal } from '~/types'
 import { useCurrentDealStore } from '~/store/current-deal.store'
 
-definePageMeta({
-    layout: 'documents',
-})
+definePageMeta({layout: 'documents'})
 useHead({title: 'Documents | Jira software'})
 
 const { data, isLoading, refetch } = useStatusQuery() //userId
-const { set } = useCurrentDealStore()
+const { set, clear } = useCurrentDealStore()
 
 const dragCardRef = ref<IDeal | null>(null)
 const sourceColumnRef = ref<IColumn | null>(null)
@@ -84,7 +82,7 @@ const handleDrop = (column: IColumn) => {
                  draggable="true"
                  @dragstart="() => handleDragStart(deal, column)"
                  :class="isPending && 'opacity-50 cursor-not-allowed'">
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2" role="button" @click="set(deal)">
                     <span class="font-bold text-lg uppercase">{{ deal.name }}</span>
                 </div>
 
@@ -94,10 +92,10 @@ const handleDrop = (column: IColumn) => {
                     {{ deal.description }}
                 </div>
 
-                <UButton color="blue" class="w-full mt-3 group" variant="ghost" @click="set(deal)">
+                <!-- <UButton color="blue" class="w-full mt-3 group" variant="ghost" @click="clear(); set(deal)">
                     <span class="font-bold">More details</span>
                     <Icon name="material-symbols:arrow-right-alt-rounded" class="group-hover:translate-x-2 transition" />
-                </UButton>
+                </UButton> -->
             </div>
         </div>
         

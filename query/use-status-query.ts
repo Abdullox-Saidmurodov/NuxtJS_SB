@@ -1,11 +1,11 @@
-import { COLLECTION_DEALS } from '~/constants/index';
+// import { COLLECTION_DEALS } from '~/constants/index';
 // import {useQuery} from '@transtack/vue-query'import { useQuery } from '@tanstack/vue-query'
 import { useQuery } from '@tanstack/vue-query'
 import { DATABASE } from '~/libs/appwrite'
 import { useAuthStore } from './../store/auth.store'
 import { Query } from 'appwrite'
 import { COLLECTION_DEALS, DB_ID, status } from '~/constants'
-import { IColumn, IDeal } from '~/types/index';
+import type { IColumn, IDeal } from '~/types'
 
 export const useStatusQuery = () => {//userId: string
     const {currentUser} = useAuthStore()

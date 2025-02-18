@@ -31,6 +31,7 @@ const logout = async () => {
                     <NuxtLink to="/documents">
                         <UButton color="blue" variant="outline">Documents</UButton>
                     </NuxtLink>
+                    <SharedUserBox />
                 </template>
                 <template v-else>
                     <NuxtLink to="/auth">
